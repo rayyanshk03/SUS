@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            padding: 40px 24px;
+        }
+
+        .header {
+            max-width: 1000px;
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 0.88rem;
+            margin-top: 4px;
+        }
+
+        .badge {
+            background: #111;
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .refresh-btn {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            color: #0f172a;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .refresh-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        /* Stats strip */
+        .stats {
+            max-width: 1000px;
+            margin: 0 auto 28px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-card .label {
+            font-size: 0.78rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* Table */
+        .table-wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+            cursor: pointer;
+        }
+
+        tbody td {
+            padding: 14px 20px;
+            font-size: 0.9rem;
+        }
+
+        .username-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #111;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .login-count {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .muted {
+            color: #94a3b8;
+            font-size: 0.82rem;
+        }
+
+        /* Log drawer */
+        .log-drawer {
+            display: none;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .log-drawer.open {
+            display: table-row;
+        }
+
+        .log-drawer td {
+            padding: 16px 20px 16px 64px;
+        }
+
+        .log-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-list li {
+            font-size: 0.82rem;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .log-list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #94a3b8;
+            flex-shrink: 0;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .empty span {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #autoRefreshLabel {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot-live {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div>
+            <h1>Admin Dashboard</h1>
+            <p>User accounts &amp; login activity</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span id="autoRefreshLabel"><span class="dot-live"></span> Auto-refresh 30s</span>
+            <button class="refresh-btn" onclick="loadUsers()">↺ Refresh</button>
+            <a href="index.html" style="text-decoration:none;"><button class="refresh-btn">← Back to Login</button></a>
+        </div>
+    </div>
+
+    <div class="stats" id="statsStrip">
+        <div class="stat-card">
+            <div class="label">Total Users</div>
+            <div class="value" id="statUsers">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Logins</div>
+            <div class="value" id="statLogins">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Most Active</div>
+            <div class="value" id="statTop" style="font-size:1.2rem;padding-top:6px;">—</div>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Registered</th>
+                    <th>Login Count</th>
+                    <th>Last Login</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="4" class="empty"><span>⏳</span>Loading…</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3000';
+        let openUser = null;
+
+        async function loadUsers() {
+            try {
+                const res = await fetch(`${API}/api/admin/users`);
+                const users = await res.json();
+                renderTable(users);
+            } catch {
+                document.getElementById('tableBody').innerHTML =
+                    `<tr><td colspan="4" class="empty"><span>⚠️</span>Cannot connect to server.<br><small>Make sure <code>node server.js</code> is running.</small></td></tr>`;
+            }
+        }
+
+        function fmt(dateStr) {
+            if (!dateStr) return '—';
+            return new Date(dateStr).toLocaleString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+        function fmtDate(dateStr) {
+            if (!dateStr) return '—';
+            return new Date(dateStr).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric'
+            });
+        }
+
+        function renderTable(users) {
+            // Stats
+            const totalLogins = users.reduce((s, u) => s + (u.login_count || 0), 0);
+            const topUser = users.reduce((a, b) => (b.login_count > (a?.login_count || 0) ? b : a), null);
+            document.getElementById('statUsers').textContent = users.length;
+            document.getElementById('statLogins').textContent = totalLogins;
+            document.getElementById('statTop').textContent = topUser ? topUser.username : '—';
+
+            if (users.length === 0) {
+                document.getElementById('tableBody').innerHTML =
+                    `<tr><td colspan="4" class="empty"><span>👤</span>No users registered yet.</td></tr>`;
+                return;
+            }
+
+            const rows = users.map(u => `
+      <tr onclick="toggleLogs('${u.username}', this)" data-user="${u.username}">
+        <td>
+          <div class="username-cell">
+            <div class="avatar">${u.username.charAt(0).toUpperCase()}</div>
+            <span>${u.username}</span>
+          </div>
+        </td>
+        <td>${fmtDate(u.created_at)}</td>
+        <td><span class="login-count">${u.login_count}</span></td>
+        <td>${fmt(u.last_login)}</td>
+      </tr>
+      <tr class="log-drawer" id="drawer-${u.username}">
+        <td colspan="4"><ul class="log-list" id="logs-${u.username}"><li>Loading…</li></ul></td>
+      </tr>
+    `).join('');
+
+            document.getElementById('tableBody').innerHTML = rows;
+        }
+
+        async function toggleLogs(username, row) {
+            const drawer = document.getElementById(`drawer-${username}`);
+            if (drawer.classList.contains('open')) {
+                drawer.classList.remove('open');
+                openUser = null;
+                return;
+            }
+            // Close any open drawer
+            document.querySelectorAll('.log-drawer.open').forEach(d => d.classList.remove('open'));
+            drawer.classList.add('open');
+            openUser = username;
+
+            const list = document.getElementById(`logs-${username}`);
+            list.innerHTML = '<li>Loading…</li>';
+
+            try {
+                const res = await fetch(`${API}/api/admin/users/${username}/logs`);
+                const logs = await res.json();
+                list.innerHTML = logs.length
+                    ? logs.map(l => `<li>${fmt(l.logged_in_at)}</li>`).join('')
+                    : '<li class="muted">No login records.</li>';
+            } catch {
+                list.innerHTML = '<li class="muted">Failed to load logs.</li>';
+            }
+        }
+
+        // Auto-refresh every 30s
+        loadUsers();
+        setInterval(loadUsers, 30000);
+    </script>
+</body>
+
+</html>
