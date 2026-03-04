@@ -4,6 +4,34 @@ A lightweight local authentication server with username/password login and Googl
 
 ---
 
+## ⚡ Quick Start (for anyone cloning this repo)
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/rayyanshk03/SUS.git
+cd SUS
+
+# 2. Install dependencies
+npm install
+
+# 3. Create your .env file
+cp .env.example .env
+# Then open .env and fill in your Google credentials (see Setup below)
+
+# 4. Start the server
+node server.js
+
+# 5. Open in browser
+# http://localhost:3000
+```
+
+> **Node.js v20 or higher required.** Download at [nodejs.org](https://nodejs.org)
+
+---
+
+
+---
+
 ## Features
 
 - 🔐 Username & password registration / login
